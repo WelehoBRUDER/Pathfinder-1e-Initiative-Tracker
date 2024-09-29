@@ -28,20 +28,19 @@ interface armorClass {
 	touch: number;
 }
 
-class Monster {
-	name: string;
+class Monster extends Creature {
 	altname: string;
 	hitDice: string;
-	hp: number;
-	ac: armorClass;
+	armorClass: armorClass;
 	initiative: number;
 
 	constructor(base: any) {
+		super(base);
 		this.name = base.name;
 		this.altname = base.altname;
 		this.hitDice = base.hit_points;
 		this.hp = this.hpMax();
-		this.ac = this.setAC(base.armor_class);
+		this.armorClass = this.setAC(base.armor_class);
 		this.initiative = base.initiative;
 	}
 

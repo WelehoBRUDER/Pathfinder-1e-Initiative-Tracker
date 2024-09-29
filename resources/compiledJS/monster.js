@@ -19,19 +19,18 @@ class MonsterList {
     }
 }
 const monsterList = new MonsterList();
-class Monster {
-    name;
+class Monster extends Creature {
     altname;
     hitDice;
-    hp;
-    ac;
+    armorClass;
     initiative;
     constructor(base) {
+        super(base);
         this.name = base.name;
         this.altname = base.altname;
         this.hitDice = base.hit_points;
         this.hp = this.hpMax();
-        this.ac = this.setAC(base.armor_class);
+        this.armorClass = this.setAC(base.armor_class);
         this.initiative = base.initiative;
     }
     setAC(armor) {

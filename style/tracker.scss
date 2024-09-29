@@ -3,6 +3,37 @@ body {
   overflow: hidden;
 }
 
+:root {
+  font-size: 62.5%;
+  color: white;
+}
+
 .tracker-base {
   background: rgb(22, 22, 22);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.creature-table {
+  width: 100%;
+  height: auto;
+  border: 0.2rem solid white;
+  font-size: 2rem;
+
+  .table-item {
+    .field {
+      box-sizing: border-box;
+      border: 0.2rem solid white;
+      height: 4rem;
+      min-height: 4rem;
+    }
+  }
+
+  .table-header {
+    .field {
+      height: 6rem;
+    }
+  }
 }
