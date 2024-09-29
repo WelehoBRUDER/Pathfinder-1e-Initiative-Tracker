@@ -1,0 +1,1 @@
+{"version":3,"file":"tracker.js","sourceRoot":"","sources":["../../script/tracker.ts"],"names":[],"mappings":";AAAA,MAAM,IAAI;IACT,IAAI,CAAC,MAAc,EAAE,EAAE,MAAc,CAAC;QACrC,OAAO,IAAI,CAAC,KAAK,CAAC,IAAI,CAAC,MAAM,EAAE,GAAG,CAAC,GAAG,GAAG,GAAG,CAAC,GAAG,GAAG,CAAC,CAAC;IACtD,CAAC;CACD;AAED,MAAM,cAAc,GAAG,IAAI,IAAI,EAAE,CAAC"}
