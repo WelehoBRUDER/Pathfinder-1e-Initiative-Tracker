@@ -1,2 +1,2 @@
 const trackerBase: HTMLElement = document.querySelector(".tracker-base");
-const creatureTable: HTMLTableElement = trackerBase.querySelector(".creature-table");
+const creatureBoard: HTMLTableElement = trackerBase.querySelector(".creature-board");

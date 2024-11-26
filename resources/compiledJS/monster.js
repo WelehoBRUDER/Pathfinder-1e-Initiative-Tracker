@@ -12,10 +12,16 @@ class MonsterList {
         const monsters = await data.json();
         monsters.forEach((mon) => {
             if (mon.model === "srd20.monster") {
-                this.monsters.push(new Monster(mon.fields));
+                this.monsters.push({ ...mon.fields, ac: mon.fields.armor_class });
             }
         });
-        console.log(monsters[56].fields);
+        tracker.updateCreatureToMonster(1, "ettin");
+    }
+    getMonster(id) {
+        const mon = this.monsters.find((monster) => monster.altname === id);
+        if (mon) {
+            return new Monster(mon);
+        }
     }
 }
 const monsterList = new MonsterList();
@@ -30,23 +36,10 @@ class Monster extends Creature {
         this.altname = base.altname;
         this.hitDice = base.hit_points;
         this.hp = this.hpMax();
+        this.maxHp = this.hpMax();
         this.armorClass = this.setAC(base.armor_class);
         this.initiative = base.initiative;
-    }
-    setAC(armor) {
-        // Splits each type to its own cell in an array
-        const armorTypes = armor.split(",");
-        // Separate flat-footed to its actual number and the descriptor
-        const flatString = armorTypes[2].split("(");
-        // Remove characters and save the value of each type
-        const baseArmor = parseInt(armorTypes[0]);
-        const flatFooted = parseInt(flatString[0].replace("flat-footed", ""));
-        const touch = parseInt(armorTypes[1].replace("touch", ""));
-        return {
-            baseArmor: baseArmor,
-            flatFooted: flatFooted,
-            touch: touch,
-        };
+        this.ac = this.armorClass;
     }
     hpMax() {
         return parseInt(this.hitDice.split("(")[0]);
@@ -65,5 +58,13 @@ class Monster extends Creature {
     getLink() {
         return `https://www.d20pfsrd.com/bestiary/monster-listings/vermin/ant/${this.altname}/`;
     }
+    rollInitiative() {
+        const roll = diceController.roll(20, 1);
+        this.init = roll + this.initiative;
+    }
 }
+tracker.addNewCreature();
+tracker.addNewCreature(0);
+tracker.addNewCreature(2);
+tracker.updateBoard();
 //# sourceMappingURL=monster.js.map

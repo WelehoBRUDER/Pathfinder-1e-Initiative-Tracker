@@ -1,4 +1,4 @@
 "use strict";
 const trackerBase = document.querySelector(".tracker-base");
-const creatureTable = trackerBase.querySelector(".creature-table");
+const creatureBoard = trackerBase.querySelector(".creature-board");
 //# sourceMappingURL=elems.js.map
