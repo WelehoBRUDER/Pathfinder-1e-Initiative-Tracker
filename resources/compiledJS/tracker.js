@@ -62,7 +62,6 @@ class Tracker {
         return input;
     }
     updateBoard() {
-        console.log("UPDATING");
         creatureBoard.innerHTML = "";
         // Create top layer
         const headerItems = [
@@ -87,7 +86,6 @@ class Tracker {
             const creatureItem = document.createElement("div");
             creatureItem.classList.add("creature");
             creatureItem.classList.add(factions[creature.faction]);
-            console.log(creature.name, creature.index);
             creatureItem.appendChild(this.createInitiative(creature));
             creatureItem.appendChild(this.createName(creature));
             creatureItem.appendChild(this.createHitPoints(creature));
@@ -111,8 +109,30 @@ class Tracker {
         const creatureName = document.createElement("div");
         creatureName.classList.add("item");
         creatureName.classList.add("name");
+        /* Add name input and logic */
         const input = this.createInput();
         input.value = creature.name;
+        input.addEventListener("input", () => {
+            searchMonster.summon(input);
+            searchMonster.search(input.value, creature.index);
+        });
+        input.addEventListener("focusout", () => {
+            searchMonster.remove();
+        });
+        /* Add link to creature stat block if it exists */
+        // Unfortunately, the links are inconsistent, so sometimes this will lead to a 404
+        // But usually the correct stat block can be found as the first recommendation on that page
+        if ("altname" in creature) {
+            const link = document.createElement("a");
+            const altlink = document.createElement("a");
+            link.href = creature.getLink();
+            link.target = "_blank";
+            link.textContent = "l";
+            altlink.href = creature.getLinkAlt();
+            altlink.target = "_blank";
+            altlink.textContent = "a";
+            creatureName.append(link, altlink);
+        }
         creatureName.append(input);
         return creatureName;
     }

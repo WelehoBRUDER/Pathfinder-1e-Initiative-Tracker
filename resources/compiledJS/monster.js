@@ -25,6 +25,9 @@ class MonsterList {
             return new Monster(mon);
         }
     }
+    getMonsterRaw(id) {
+        return this.monsters.find((monster) => monster.altname === id);
+    }
 }
 const monsterList = new MonsterList();
 class Monster extends Creature {
@@ -32,6 +35,8 @@ class Monster extends Creature {
     hitDice;
     armorClass;
     initiative;
+    type;
+    subtypes;
     constructor(base) {
         super(base);
         this.name = base.name;
@@ -41,6 +46,8 @@ class Monster extends Creature {
         this.maxHp = this.hpMax();
         this.armorClass = this.setAC(base.armor_class);
         this.initiative = base.initiative;
+        this.type = base.type;
+        this.subtypes = base.subtypes;
         this.ac = this.armorClass;
     }
     hpMax() {
@@ -61,7 +68,10 @@ class Monster extends Creature {
         this.hp -= amount;
     }
     getLink() {
-        return `https://www.d20pfsrd.com/bestiary/monster-listings/vermin/ant/${this.altname}/`;
+        return `https://www.d20pfsrd.com/bestiary/monster-listings/${this.type}s/${this.altname}/`;
+    }
+    getLinkAlt() {
+        return `https://www.d20pfsrd.com/bestiary/monster-listings/${this.type}s/${this.subtypes}s/${this.altname}/`;
     }
     rollInitiative() {
         const roll = diceController.roll(20, 1);
