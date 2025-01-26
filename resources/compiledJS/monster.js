@@ -15,7 +15,9 @@ class MonsterList {
                 this.monsters.push({ ...mon.fields, ac: mon.fields.armor_class });
             }
         });
+        tracker.updateCreatureToMonster(0, "goblin");
         tracker.updateCreatureToMonster(1, "ettin");
+        tracker.updateCreatureToMonster(2, "sea-serpent");
     }
     getMonster(id) {
         const mon = this.monsters.find((monster) => monster.altname === id);
@@ -54,6 +56,9 @@ class Monster extends Creature {
             hp += diceController.roll(+die);
         }
         this.hp = hp + flat;
+    }
+    damage(amount) {
+        this.hp -= amount;
     }
     getLink() {
         return `https://www.d20pfsrd.com/bestiary/monster-listings/vermin/ant/${this.altname}/`;

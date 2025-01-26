@@ -4,6 +4,7 @@ class Creature {
     faction;
     hp;
     maxHp;
+    tempHp;
     init;
     ac;
     index;
@@ -11,6 +12,7 @@ class Creature {
         this.name = base.name;
         this.hp = base.hp || 0;
         this.maxHp = base.hp || 0;
+        this.tempHp = 0;
         this.ac = this.setAC(base.ac);
         this.init = base.init || 0;
         this.faction = base.faction ?? 1;
@@ -31,7 +33,24 @@ class Creature {
             touch: touch,
         };
     }
+    setHp(amount) {
+        this.hp = amount;
+        if (this.hp > this.maxHp) {
+            this.hp = this.maxHp;
+        }
+    }
+    setMaxHp(amount) {
+        this.maxHp = amount;
+        if (this.hp > this.maxHp) {
+            this.hp = this.maxHp;
+        }
+    }
+    setTempHp(amount) {
+        this.tempHp = amount;
+    }
     hpRatio() {
+        if (this.maxHp <= 0 || this.hp <= 0)
+            return 0;
         return 100 * (this.hp / this.maxHp);
     }
     rollInitiative() {

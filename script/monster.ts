@@ -16,7 +16,9 @@ class MonsterList {
 				this.monsters.push({ ...mon.fields, ac: mon.fields.armor_class });
 			}
 		});
+		tracker.updateCreatureToMonster(0, "goblin");
 		tracker.updateCreatureToMonster(1, "ettin");
+		tracker.updateCreatureToMonster(2, "sea-serpent");
 	}
 
 	getMonster(id: string) {
@@ -69,6 +71,10 @@ class Monster extends Creature {
 			hp += diceController.roll(+die);
 		}
 		this.hp = hp + flat;
+	}
+
+	damage(amount: number) {
+		this.hp -= amount;
 	}
 
 	getLink(): string {

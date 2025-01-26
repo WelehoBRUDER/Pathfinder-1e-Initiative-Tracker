@@ -8,7 +8,7 @@ const diceController = new Dice();
 const factions = ["hostile", "neutral", "friendly"];
 const fields = [
     {
-        id: "init",
+        id: "initiative",
         type: "number",
         rollFunc: "rollInitiative",
     },
@@ -49,76 +49,149 @@ class Tracker {
             const faction = this.creatures[index].faction;
             this.creatures[index] = monsterList.getMonster(monsterId);
             this.creatures[index].faction = faction;
+            this.creatures[index].index = index;
             this.updateBoard();
         }
         else {
             console.error(monsterId, "is an invalid id");
         }
     }
+    createInput() {
+        const input = document.createElement("input");
+        input.type = "text";
+        return input;
+    }
     updateBoard() {
+        console.log("UPDATING");
         creatureBoard.innerHTML = "";
+        // Create top layer
+        const headerItems = [
+            ["init", "Init"],
+            ["name", "Creature"],
+            ["hp", "Hit Points"],
+            ["ac", "AC/Touch/Flat"],
+        ];
+        const headerBar = document.createElement("div");
+        headerBar.classList.add("creature");
+        headerBar.classList.add("header-bar");
+        headerItems.forEach(([key, val]) => {
+            const item = document.createElement("div");
+            item.classList.add("item");
+            item.classList.add(key);
+            item.textContent = val;
+            headerBar.append(item);
+        });
+        creatureBoard.append(headerBar);
         /* Deploy the creatures! */
         this.creatures.forEach((creature) => {
             const creatureItem = document.createElement("div");
             creatureItem.classList.add("creature");
-            console.log(creature);
             creatureItem.classList.add(factions[creature.faction]);
-            fields.forEach((field) => {
-                const item = document.createElement("div");
-                item.classList.add("item");
-                item.classList.add(field.id);
-                if (field.id === "hp") {
-                    const hp = document.createElement("input");
-                    const maxHp = document.createElement("input");
-                    const hpBarFill = document.createElement("div");
-                    const hpBar = document.createElement("div");
-                    const numbers = document.createElement("div");
-                    const slash = document.createElement("span");
-                    slash.textContent = "/";
-                    hp.type = "number";
-                    hp.value = creature.hp.toString();
-                    maxHp.type = "number";
-                    maxHp.value = creature.maxHp.toString();
-                    hpBar.classList.add(`hpBar_${creature.index}`);
-                    hpBar.classList.add(`bar`);
-                    hpBarFill.classList.add(`hpBarFill_${creature.index}`);
-                    hpBarFill.classList.add(`barFill`);
-                    numbers.classList.add("numbers");
-                    hpBarFill.style.width = `${creature.hpRatio()}%`;
-                    hpBar.append(hpBarFill);
-                    hpBar.append(numbers);
-                    numbers.append(hp, slash, maxHp);
-                    item.append(hpBar);
-                }
-                else {
-                    const input = document.createElement("input");
-                    input.type = field.type;
-                    //@ts-ignore
-                    input.value = creature[field.id];
-                    if (field.rollFunc) {
-                        console.log("add roll button");
-                    }
-                    if (field.id === "ac") {
-                        const { baseArmor, flatFooted, touch } = creature.ac;
-                        console.log(baseArmor, flatFooted, touch);
-                        input.value = touch.toString();
-                        const baseIn = document.createElement("input");
-                        const flatIn = document.createElement("input");
-                        baseIn.type = field.type;
-                        flatIn.type = field.type;
-                        baseIn.value = baseArmor.toString();
-                        flatIn.value = flatFooted.toString();
-                        item.append(baseIn, flatIn);
-                    }
-                    item.append(input);
-                }
-                creatureItem.append(item);
-            });
+            console.log(creature.name, creature.index);
+            creatureItem.appendChild(this.createInitiative(creature));
+            creatureItem.appendChild(this.createName(creature));
+            creatureItem.appendChild(this.createHitPoints(creature));
+            creatureItem.appendChild(this.createAC(creature));
             /* Initiative */
             const init = document.createElement("div");
             init.classList.add("init");
             creatureBoard.append(creatureItem);
         });
+    }
+    createInitiative(creature) {
+        const initiative = document.createElement("div");
+        initiative.classList.add("item");
+        initiative.classList.add("init");
+        const input = this.createInput();
+        input.value = "0";
+        initiative.append(input);
+        return initiative;
+    }
+    createName(creature) {
+        const creatureName = document.createElement("div");
+        creatureName.classList.add("item");
+        creatureName.classList.add("name");
+        const input = this.createInput();
+        input.value = creature.name;
+        creatureName.append(input);
+        return creatureName;
+    }
+    createHitPoints(creature) {
+        /* Create base element */
+        const hitPoints = document.createElement("div");
+        hitPoints.classList.add("item");
+        hitPoints.classList.add("hp");
+        /* Create a ton of elements */
+        const hp = this.createInput();
+        const maxHp = this.createInput();
+        const hpBarFill = document.createElement("div");
+        const hpBar = document.createElement("div");
+        const numbers = document.createElement("div");
+        const slash = document.createElement("span");
+        /* Set values */
+        slash.textContent = "/";
+        hp.value = creature.hp.toString();
+        maxHp.value = creature.maxHp.toString();
+        /* Handle class lists */
+        hp.classList.add("hp-num");
+        maxHp.classList.add("hp-num");
+        hpBar.classList.add(`hpBar_${creature.index}`);
+        hpBar.classList.add(`bar`);
+        hpBarFill.classList.add(`hpBarFill_${creature.index}`);
+        hpBarFill.classList.add(`barFill`);
+        numbers.classList.add("numbers");
+        /* Set bar ratio and append everything together */
+        hpBarFill.style.width = `${creature.hpRatio()}%`;
+        hpBar.append(hpBarFill);
+        hpBar.append(numbers);
+        numbers.append(hp, slash, maxHp);
+        hitPoints.append(hpBar);
+        /* Add event listeners and handle logic */
+        hp.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                const value = handleEvent(hp.value);
+                if (isNaN(value)) {
+                    hp.value = creature.hp.toString();
+                }
+                else {
+                    creature.setHp(value);
+                    hp.value = value.toString();
+                }
+                hpBarFill.style.width = `${creature.hpRatio()}%`;
+            }
+        });
+        maxHp.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                const value = handleEvent(maxHp.value);
+                if (isNaN(value)) {
+                    maxHp.value = creature.maxHp.toString();
+                }
+                else {
+                    creature.setMaxHp(value);
+                    hp.value = creature.hp.toString();
+                    maxHp.value = value.toString();
+                }
+                hpBarFill.style.width = `${creature.hpRatio()}%`;
+            }
+        });
+        const handleEvent = (val) => {
+            if (val.match("^[^a-zA-Z]*[+-/*][^a-zA-Z]*$")) {
+                return Math.floor(eval(val));
+            }
+            return parseInt(val);
+        };
+        return hitPoints;
+    }
+    createAC(creature) {
+        const armorClass = document.createElement("div");
+        armorClass.classList.add("item");
+        armorClass.classList.add("ac");
+        const { baseArmor, flatFooted, touch } = creature.ac;
+        const acEditable = document.createElement("div");
+        acEditable.contentEditable = "true";
+        acEditable.textContent = `${baseArmor} / ${flatFooted} / ${touch}`;
+        armorClass.append(acEditable);
+        return armorClass;
     }
 }
 const tracker = new Tracker();
