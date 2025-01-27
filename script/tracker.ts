@@ -64,7 +64,8 @@ class Tracker {
 				this.creatures.push(monster);
 			} else {
 				// this is not a monster
-				const being = new Creature(creature);
+				console.log(creature);
+				const being = new Creature({ ...creature });
 				being.ac = creature.ac;
 				being.hp = creature.hp;
 				being.maxHp = creature.maxHp;
@@ -388,9 +389,23 @@ class Tracker {
 		armorClass.classList.add("item");
 		armorClass.classList.add("ac");
 		const { baseArmor, flatFooted, touch } = creature.ac;
-		const acEditable = document.createElement("div");
-		acEditable.contentEditable = "true";
-		acEditable.textContent = `${baseArmor} / ${flatFooted} / ${touch}`;
+		const acEditable = this.createInput();
+		acEditable.value = `${baseArmor} / ${flatFooted} / ${touch}`;
+
+		acEditable.addEventListener("keypress", (e) => {
+			if (e.key === "Enter") {
+				const values = acEditable.value.split("/");
+				try {
+					const [base, touch, flat] = values.map((a) => parseInt(a));
+					creature.ac.baseArmor = base;
+					creature.ac.touch = touch;
+					creature.ac.flatFooted = flat;
+					this.saveCurrentBoard();
+				} catch {
+					console.log("Invalid values in AC of ", creature.name);
+				}
+			}
+		});
 		armorClass.append(acEditable);
 		return armorClass;
 	}
