@@ -65,10 +65,13 @@ class Monster extends Creature {
         this.hp -= amount;
     }
     getLink() {
-        return `https://www.d20pfsrd.com/bestiary/monster-listings/${this.type}s/${this.altname}/`;
+        return `https://www.d20pfsrd.com/bestiary/monster-listings/${this.type}s/${this.getAltName()}/`;
     }
     getLinkAlt() {
-        return `https://www.d20pfsrd.com/bestiary/monster-listings/${this.type}s/${this.subtypes}s/${this.altname}/`;
+        return `https://www.d20pfsrd.com/bestiary/monster-listings/${this.type}s/${this.subtypes}s/${this.getAltName()}/`;
+    }
+    getAltName() {
+        return this.altname;
     }
     rollInitiative() {
         super.rollInitiative();
