@@ -211,7 +211,7 @@ class Tracker {
 		const btn: HTMLButtonElement = document.createElement("button");
 		const bg: HTMLImageElement = document.createElement("img");
 		btn.classList.add("embedded-button");
-		bg.src = `../../resources/img/${img}.png`;
+		bg.src = `./resources/img/${img}.png`;
 		btn.append(bg);
 		return btn;
 	}
@@ -220,7 +220,7 @@ class Tracker {
 		const btn: HTMLButtonElement = document.createElement("button");
 		const bg: HTMLImageElement = document.createElement("img");
 		btn.classList.add("visible-button");
-		bg.src = `../../resources/img/${img}.png`;
+		bg.src = `./resources/img/${img}.png`;
 		btn.append(bg);
 		return btn;
 	}
@@ -228,7 +228,7 @@ class Tracker {
 	createEmbeddedLink(link: string): HTMLAnchorElement {
 		const anchor: HTMLAnchorElement = document.createElement("a");
 		const img: HTMLImageElement = document.createElement("img");
-		img.src = "../../resources/img/link.png";
+		img.src = "./resources/img/link.png";
 		anchor.classList.add("embedded-button");
 		anchor.target = "_blank";
 		anchor.href = link;

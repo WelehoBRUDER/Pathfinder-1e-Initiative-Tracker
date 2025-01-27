@@ -193,7 +193,7 @@ class Tracker {
         const btn = document.createElement("button");
         const bg = document.createElement("img");
         btn.classList.add("embedded-button");
-        bg.src = `../../resources/img/${img}.png`;
+        bg.src = `./resources/img/${img}.png`;
         btn.append(bg);
         return btn;
     }
@@ -201,14 +201,14 @@ class Tracker {
         const btn = document.createElement("button");
         const bg = document.createElement("img");
         btn.classList.add("visible-button");
-        bg.src = `../../resources/img/${img}.png`;
+        bg.src = `./resources/img/${img}.png`;
         btn.append(bg);
         return btn;
     }
     createEmbeddedLink(link) {
         const anchor = document.createElement("a");
         const img = document.createElement("img");
-        img.src = "../../resources/img/link.png";
+        img.src = "./resources/img/link.png";
         anchor.classList.add("embedded-button");
         anchor.target = "_blank";
         anchor.href = link;
