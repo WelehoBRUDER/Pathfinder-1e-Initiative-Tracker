@@ -30,10 +30,12 @@ const fields = [
 class Tracker {
     creatures = [];
     round = 0;
+    turn = -1;
     saveCurrentBoard() {
         const save = {
             creatures: JSON.stringify(this.creatures),
             round: this.round,
+            turn: this.turn,
         };
         localStorage.setItem("PF1ESRD-Tracker-current", JSON.stringify(save));
     }
@@ -41,11 +43,11 @@ class Tracker {
         const save = localStorage.getItem("PF1ESRD-Tracker-current");
         const board = JSON.parse(save);
         const creatures = JSON.parse(board.creatures);
+        this.round = parseInt(board.round);
+        this.turn = parseInt(board.turn) ?? -1;
         creatures.forEach((creature) => {
             if ("hitDice" in creature) {
                 // this is a monster
-                console.log(creature.altname);
-                console.log(monsterList);
                 const monster = new Monster(monsterList.getMonster(creature.altname));
                 monster.ac = creature.ac;
                 monster.hp = creature.hp;

@@ -9,7 +9,7 @@ class MonsterList {
 	}
 
 	async loadData() /**:void*/ {
-		const data = await fetch("/data/monsters.json");
+		const data = await fetch("./data/monsters.json");
 		const monsters = await data.json();
 		monsters.forEach((mon: any) => {
 			if (mon.model === "srd20.monster") {
