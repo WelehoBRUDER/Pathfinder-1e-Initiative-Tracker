@@ -32,9 +32,46 @@ const fields = [
 ];
 
 class Tracker {
-	creatures: Array<Creature | Monster> = [];
-	round: number = 0;
-	turn: number = -1;
+	public creatures: Array<Creature | Monster> = [];
+	public round: number = 0;
+	public turn: number = -1;
+	public roundCounter: HTMLDivElement = document.querySelector(".round-counter");
+	private roundCounterValue: HTMLParagraphElement = document.querySelector(".round-counter .counter");
+
+	moveTurn(by: number) {
+		this.turn += by;
+		if (this.turn > this.creatures.length - 1) {
+			this.turn = -1;
+			this.round += 1;
+		}
+		if (this.turn < -1) {
+			this.turn = -1;
+		}
+		this.updateTurn();
+	}
+
+	updateTurn() {
+		// Clear current effects
+		try {
+			document.querySelector(".current").classList.remove("current");
+		} catch {
+			console.warn("Trying to remove current from nothing");
+		}
+
+		const base: HTMLDivElement = document.querySelector(`.c${this.turn}`);
+		if (base) {
+			base.classList.add("current");
+			this.saveCurrentBoard();
+		}
+
+		this.roundCounterValue.textContent = `Round: ${this.round}`;
+	}
+
+	resetRounds() {
+		this.round = 0;
+		this.roundCounterValue.textContent = `Round: ${this.round}`;
+		this.saveCurrentBoard();
+	}
 
 	saveCurrentBoard() {
 		const save = {
@@ -61,6 +98,7 @@ class Tracker {
 				monster.hp = creature.hp;
 				monster.maxHp = creature.maxHp;
 				monster.init = creature.init;
+				monster.faction = creature.faction;
 				this.creatures.push(monster);
 			} else {
 				// this is not a monster
@@ -73,7 +111,9 @@ class Tracker {
 				this.creatures.push(being);
 			}
 		});
-		this.updateBoard();
+
+		this.sortCreatures();
+		this.updateTurn();
 	}
 
 	clear(): void {
@@ -141,6 +181,10 @@ class Tracker {
 			}
 			return 0;
 		});
+
+		this.creatures.forEach((creature: Monster | Creature, index: number) => {
+			this.creatures[index].index = index;
+		});
 		this.updateBoard();
 	}
 
@@ -172,6 +216,15 @@ class Tracker {
 		return btn;
 	}
 
+	createVisibleButton(img: string): HTMLButtonElement {
+		const btn: HTMLButtonElement = document.createElement("button");
+		const bg: HTMLImageElement = document.createElement("img");
+		btn.classList.add("visible-button");
+		bg.src = `../../resources/img/${img}.png`;
+		btn.append(bg);
+		return btn;
+	}
+
 	createEmbeddedLink(link: string): HTMLAnchorElement {
 		const anchor: HTMLAnchorElement = document.createElement("a");
 		const img: HTMLImageElement = document.createElement("img");
@@ -187,11 +240,12 @@ class Tracker {
 		this.saveCurrentBoard();
 		creatureBoard.innerHTML = "";
 		// Create top layer
-		const headerItems: FixedLengthArray<[string, string, string], 4> = [
+		const headerItems: FixedLengthArray<[string, string, string], 5> = [
 			["init", "Initiative", "Initiative, both current and bonus"],
 			["name", "Name", "Creature's name / type"],
 			["hp", "Hit Points", "HP bar that shows both current and max health"],
 			["ac", "AC/Touch/Flat", "Armor Class, Touch AC and Flat-footed AC"],
+			["mng", "Manage", "Copy or delete creatures"],
 		];
 		const headerBar = document.createElement("div");
 		headerBar.classList.add("creature");
@@ -212,12 +266,14 @@ class Tracker {
 			const creatureItem = document.createElement("div");
 			creatureItem.classList.add("creature");
 			creatureItem.classList.add(factions[creature.faction]);
+			creatureItem.classList.add("c" + creature.index);
 
 			// Create each cell within the creature element
 			creatureItem.appendChild(this.createInitiative(creature));
 			creatureItem.appendChild(this.createName(creature));
 			creatureItem.appendChild(this.createHitPoints(creature));
 			creatureItem.appendChild(this.createAC(creature));
+			creatureItem.appendChild(this.createManage(creature));
 
 			creatureBoard.append(creatureItem);
 		});
@@ -409,7 +465,52 @@ class Tracker {
 		armorClass.append(acEditable);
 		return armorClass;
 	}
+
+	createManage(creature: Creature | Monster): HTMLDivElement {
+		const manage = document.createElement("div");
+		manage.classList.add("item");
+		manage.classList.add("mng");
+
+		const copyBtn: HTMLButtonElement = this.createVisibleButton("copy");
+		const deleteBtn: HTMLButtonElement = this.createVisibleButton("trash-can");
+		copyBtn.classList.add("blue");
+		deleteBtn.classList.add("red");
+
+		copyBtn.addEventListener("click", () => {
+			if ("hitDice" in creature) {
+				const monster = new Monster(monsterList.getMonster(creature.altname));
+				monster.ac = creature.ac;
+				monster.hp = creature.hp;
+				monster.maxHp = creature.maxHp;
+				monster.init = creature.init;
+				monster.faction = creature.faction;
+				this.creatures.push(monster);
+			} else {
+				// @ts-ignore
+				const being = new Creature({ ...creature });
+				being.ac = creature.ac;
+				being.hp = creature.hp;
+				being.maxHp = creature.maxHp;
+				being.init = creature.init;
+				this.creatures.push(being);
+			}
+			this.sortCreatures();
+		});
+
+		deleteBtn.addEventListener("click", () => {
+			this.creatures.splice(creature.index, 1);
+			this.sortCreatures();
+		});
+		manage.append(copyBtn, deleteBtn);
+		return manage;
+	}
 }
 
 const tracker = new Tracker();
 tracker.loadPreviousBoard();
+const resetBtn = tracker.createEmbeddedButton("cycle");
+resetBtn.title = "Reset round counter to 0";
+resetBtn.addEventListener("click", () => {
+	tracker.resetRounds();
+});
+tracker.roundCounter.append(resetBtn);

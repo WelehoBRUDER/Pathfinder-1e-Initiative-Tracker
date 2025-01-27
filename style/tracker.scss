@@ -17,6 +17,9 @@ button.hostile {
 
 .buttons-top,
 .buttons-bottom {
+  .outside-btn {
+    padding: 1rem;
+  }
   button.add-btn {
     width: 7rem;
     font-size: 6rem;
@@ -35,7 +38,8 @@ button.hostile {
   }
 }
 
-.embedded-button {
+.embedded-button,
+.visible-button {
   margin: 0;
   padding: 0;
   position: relative;
@@ -44,7 +48,7 @@ button.hostile {
   outline: none;
   background: none;
   width: 3.5rem;
-  height: 3.5rem;
+  // height: 3.5rem;
   transition: 0.3s;
   opacity: 0;
   z-index: 2;
@@ -53,6 +57,42 @@ button.hostile {
   img {
     width: 100%;
     height: 100%;
+  }
+}
+
+button.visible-button {
+  opacity: 1;
+  margin: 1.5rem;
+  border-style: outset;
+  border-color: buttonborder;
+  outline: default;
+  border-radius: 100%;
+  background: grey;
+  padding: 1rem;
+  display: flex;
+  width: 6rem;
+
+  img {
+    padding: 0;
+    margin: 0;
+  }
+
+  &:hover {
+    filter: brightness(0.8);
+  }
+}
+
+button {
+  &.red {
+    background: $dark-red;
+    color: crimson;
+    border-color: rgb(133, 21, 21);
+  }
+
+  &.blue {
+    color: cyan;
+    background: $blue;
+    border-color: rgb(18, 18, 136);
   }
 }
 
@@ -132,23 +172,28 @@ button.hostile {
 }
 
 .creature-board {
-  width: 100%;
+  width: 90vw;
   height: auto;
-  border: 0.2rem solid white;
   font-size: 2rem;
 
   .creature {
     width: 100%;
     height: 10rem;
-    border: 0.3rem solid silver;
+    border: 0.3rem solid rgb(124, 124, 124);
     box-sizing: border-box;
     font-size: 3.5rem;
     display: flex;
     align-items: center;
     justify-content: flex-start;
 
+    &.current {
+      position: relative;
+      transform: scale(1.1);
+      z-index: 50;
+    }
+
     .init {
-      width: 20vw;
+      width: 20%;
 
       input {
         width: 15rem;
@@ -156,7 +201,7 @@ button.hostile {
     }
 
     .name {
-      width: 25vw;
+      width: 22.5%;
 
       input[type="text"] {
         font-size: 2.5rem;
@@ -164,11 +209,15 @@ button.hostile {
     }
 
     .hp {
-      width: 35vw;
+      width: 27.5%;
     }
 
     .ac {
-      width: 20vw;
+      width: 15%;
+    }
+
+    .mng {
+      width: 15%;
     }
 
     .item {
@@ -192,7 +241,7 @@ button.hostile {
 
     .item {
       height: 100%;
-      border: 0.5rem solid white;
+      border: 0.5rem solid rgb(100, 100, 100);
       box-sizing: border-box;
       padding: 0.5rem;
       box-shadow: inset 0 0 1.2rem 1rem rgb(43, 43, 43);
@@ -298,6 +347,21 @@ button.hostile {
         }
       }
     }
+  }
+}
+
+.round-counter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  .counter {
+    font-size: 3.5rem;
+    margin: 2rem;
+  }
+
+  > button.embedded-button {
+    opacity: 1;
   }
 }
 

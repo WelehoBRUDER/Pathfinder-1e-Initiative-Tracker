@@ -31,6 +31,39 @@ class Tracker {
     creatures = [];
     round = 0;
     turn = -1;
+    roundCounter = document.querySelector(".round-counter");
+    roundCounterValue = document.querySelector(".round-counter .counter");
+    moveTurn(by) {
+        this.turn += by;
+        if (this.turn > this.creatures.length - 1) {
+            this.turn = -1;
+            this.round += 1;
+        }
+        if (this.turn < -1) {
+            this.turn = -1;
+        }
+        this.updateTurn();
+    }
+    updateTurn() {
+        // Clear current effects
+        try {
+            document.querySelector(".current").classList.remove("current");
+        }
+        catch {
+            console.warn("Trying to remove current from nothing");
+        }
+        const base = document.querySelector(`.c${this.turn}`);
+        if (base) {
+            base.classList.add("current");
+            this.saveCurrentBoard();
+        }
+        this.roundCounterValue.textContent = `Round: ${this.round}`;
+    }
+    resetRounds() {
+        this.round = 0;
+        this.roundCounterValue.textContent = `Round: ${this.round}`;
+        this.saveCurrentBoard();
+    }
     saveCurrentBoard() {
         const save = {
             creatures: JSON.stringify(this.creatures),
@@ -53,6 +86,7 @@ class Tracker {
                 monster.hp = creature.hp;
                 monster.maxHp = creature.maxHp;
                 monster.init = creature.init;
+                monster.faction = creature.faction;
                 this.creatures.push(monster);
             }
             else {
@@ -66,7 +100,8 @@ class Tracker {
                 this.creatures.push(being);
             }
         });
-        this.updateBoard();
+        this.sortCreatures();
+        this.updateTurn();
     }
     clear() {
         const confirmation = confirm("Are you sure you want to clear the board?");
@@ -131,6 +166,9 @@ class Tracker {
             }
             return 0;
         });
+        this.creatures.forEach((creature, index) => {
+            this.creatures[index].index = index;
+        });
         this.updateBoard();
     }
     updateCreatureToMonster(index, monsterId) {
@@ -159,6 +197,14 @@ class Tracker {
         btn.append(bg);
         return btn;
     }
+    createVisibleButton(img) {
+        const btn = document.createElement("button");
+        const bg = document.createElement("img");
+        btn.classList.add("visible-button");
+        bg.src = `../../resources/img/${img}.png`;
+        btn.append(bg);
+        return btn;
+    }
     createEmbeddedLink(link) {
         const anchor = document.createElement("a");
         const img = document.createElement("img");
@@ -178,6 +224,7 @@ class Tracker {
             ["name", "Name", "Creature's name / type"],
             ["hp", "Hit Points", "HP bar that shows both current and max health"],
             ["ac", "AC/Touch/Flat", "Armor Class, Touch AC and Flat-footed AC"],
+            ["mng", "Manage", "Copy or delete creatures"],
         ];
         const headerBar = document.createElement("div");
         headerBar.classList.add("creature");
@@ -197,11 +244,13 @@ class Tracker {
             const creatureItem = document.createElement("div");
             creatureItem.classList.add("creature");
             creatureItem.classList.add(factions[creature.faction]);
+            creatureItem.classList.add("c" + creature.index);
             // Create each cell within the creature element
             creatureItem.appendChild(this.createInitiative(creature));
             creatureItem.appendChild(this.createName(creature));
             creatureItem.appendChild(this.createHitPoints(creature));
             creatureItem.appendChild(this.createAC(creature));
+            creatureItem.appendChild(this.createManage(creature));
             creatureBoard.append(creatureItem);
         });
     }
@@ -376,7 +425,49 @@ class Tracker {
         armorClass.append(acEditable);
         return armorClass;
     }
+    createManage(creature) {
+        const manage = document.createElement("div");
+        manage.classList.add("item");
+        manage.classList.add("mng");
+        const copyBtn = this.createVisibleButton("copy");
+        const deleteBtn = this.createVisibleButton("trash-can");
+        copyBtn.classList.add("blue");
+        deleteBtn.classList.add("red");
+        copyBtn.addEventListener("click", () => {
+            if ("hitDice" in creature) {
+                const monster = new Monster(monsterList.getMonster(creature.altname));
+                monster.ac = creature.ac;
+                monster.hp = creature.hp;
+                monster.maxHp = creature.maxHp;
+                monster.init = creature.init;
+                monster.faction = creature.faction;
+                this.creatures.push(monster);
+            }
+            else {
+                // @ts-ignore
+                const being = new Creature({ ...creature });
+                being.ac = creature.ac;
+                being.hp = creature.hp;
+                being.maxHp = creature.maxHp;
+                being.init = creature.init;
+                this.creatures.push(being);
+            }
+            this.sortCreatures();
+        });
+        deleteBtn.addEventListener("click", () => {
+            this.creatures.splice(creature.index, 1);
+            this.sortCreatures();
+        });
+        manage.append(copyBtn, deleteBtn);
+        return manage;
+    }
 }
 const tracker = new Tracker();
 tracker.loadPreviousBoard();
+const resetBtn = tracker.createEmbeddedButton("cycle");
+resetBtn.title = "Reset round counter to 0";
+resetBtn.addEventListener("click", () => {
+    tracker.resetRounds();
+});
+tracker.roundCounter.append(resetBtn);
 //# sourceMappingURL=tracker.js.map
