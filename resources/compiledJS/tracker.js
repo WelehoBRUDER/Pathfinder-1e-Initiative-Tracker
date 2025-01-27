@@ -28,9 +28,42 @@ const fields = [
     },
 ];
 class Tracker {
-    creatures;
-    constructor() {
-        this.creatures = [];
+    creatures = [];
+    round = 0;
+    saveCurrentBoard() {
+        const save = {
+            creatures: JSON.stringify(this.creatures),
+            round: this.round,
+        };
+        localStorage.setItem("PF1ESRD-Tracker-current", JSON.stringify(save));
+    }
+    loadPreviousBoard() {
+        const save = localStorage.getItem("PF1ESRD-Tracker-current");
+        const board = JSON.parse(save);
+        const creatures = JSON.parse(board.creatures);
+        creatures.forEach((creature) => {
+            if ("hitDice" in creature) {
+                // this is a monster
+                console.log(creature.altname);
+                console.log(monsterList);
+                const monster = new Monster(monsterList.getMonster(creature.altname));
+                monster.ac = creature.ac;
+                monster.hp = creature.hp;
+                monster.maxHp = creature.maxHp;
+                monster.init = creature.init;
+                this.creatures.push(monster);
+            }
+            else {
+                // this is not a monster
+                const being = new Creature(creature);
+                being.ac = creature.ac;
+                being.hp = creature.hp;
+                being.maxHp = creature.maxHp;
+                being.init = creature.init;
+                this.creatures.push(being);
+            }
+        });
+        this.updateBoard();
     }
     clear() {
         const confirmation = confirm("Are you sure you want to clear the board?");
@@ -74,7 +107,6 @@ class Tracker {
         // These two are identical, but always in this order so we can differentiate them
         const hp = bar.querySelectorAll(".hp-num")[0];
         const maxHp = bar.querySelectorAll(".hp-num")[1];
-        console.log(hp, maxHp);
         hp.value = creature.hp.toString();
         maxHp.value = creature.maxHp.toString();
         fill.style.width = `${creature.hpRatio()}%`;
@@ -135,6 +167,7 @@ class Tracker {
         return anchor;
     }
     updateBoard() {
+        this.saveCurrentBoard();
         creatureBoard.innerHTML = "";
         // Create top layer
         const headerItems = [
@@ -182,12 +215,14 @@ class Tracker {
         rollBtn.addEventListener("click", () => {
             creature.rollInitiative();
             input.value = creature.getInit();
+            this.saveCurrentBoard();
         });
         input.addEventListener("keyup", (e) => {
             if (e.key === "Enter") {
                 const num = parseInt(input.value);
                 if (!isNaN(num)) {
                     creature.init = num;
+                    this.saveCurrentBoard();
                 }
             }
         });
@@ -206,6 +241,14 @@ class Tracker {
         });
         input.addEventListener("focusout", () => {
             searchMonster.remove();
+            this.saveCurrentBoard();
+        });
+        input.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                creature.name = input.value;
+                this.saveCurrentBoard();
+                searchMonster.remove();
+            }
         });
         /* Add link to creature stat block if it exists */
         // Unfortunately, the links are inconsistent, so sometimes this will lead to a 404
@@ -265,6 +308,7 @@ class Tracker {
                     creature.setHp(value);
                     hp.value = value.toString();
                 }
+                this.saveCurrentBoard();
                 hpBarFill.style.width = `${creature.hpRatio()}%`;
             }
         });
@@ -279,6 +323,7 @@ class Tracker {
                     hp.value = creature.hp.toString();
                     maxHp.value = value.toString();
                 }
+                this.saveCurrentBoard();
                 hpBarFill.style.width = `${creature.hpRatio()}%`;
             }
         });
@@ -296,6 +341,7 @@ class Tracker {
                 creature.hpRoll();
                 hp.value = creature.hp.toString();
                 maxHp.value = creature.maxHp.toString();
+                this.saveCurrentBoard();
                 hpBarFill.style.width = `${creature.hpRatio()}%`;
             });
             numbers.append(hpRoll);

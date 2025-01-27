@@ -19,9 +19,10 @@ class Creature {
 	index: number;
 
 	constructor(base: CreatureBase) {
+		console.log(base);
 		this.name = base.name;
-		this.hp = base.hp || 0;
-		this.maxHp = base.hp || 0;
+		this.hp = base.hp ?? 0;
+		this.maxHp = base?.maxHp ?? base.hp ?? 0;
 		this.tempHp = 0;
 		this.ac = this.setAC(base.ac);
 		this.init = base.init || 0;
@@ -30,6 +31,9 @@ class Creature {
 	}
 
 	setAC(armor: string): armorClass {
+		if (typeof armor !== "string") {
+			return armor;
+		}
 		// Splits each type to its own cell in an array
 		const armorTypes = armor.split(",");
 		// Separate flat-footed to its actual number and the descriptor

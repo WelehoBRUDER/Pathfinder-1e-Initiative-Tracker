@@ -15,9 +15,7 @@ class MonsterList {
                 this.monsters.push({ ...mon.fields, ac: mon.fields.armor_class });
             }
         });
-        tracker.updateCreatureToMonster(0, "goblin");
-        tracker.updateCreatureToMonster(1, "ettin");
-        tracker.updateCreatureToMonster(2, "sea-serpent");
+        tracker.loadPreviousBoard();
     }
     getMonster(id) {
         const mon = this.monsters.find((monster) => monster.altname === id);
@@ -41,7 +39,7 @@ class Monster extends Creature {
         super(base);
         this.name = base.name;
         this.altname = base.altname;
-        this.hitDice = base.hit_points;
+        this.hitDice = base.hit_points ?? base.hitDice;
         this.hp = this.hpMax();
         this.maxHp = this.hpMax();
         this.armorClass = this.setAC(base.armor_class);
@@ -83,8 +81,4 @@ class Monster extends Creature {
         return `${num} (${this.initiative >= 0 ? "+" : ""}${this.initiative})`;
     }
 }
-tracker.addNewCreature();
-tracker.addNewCreature(0);
-tracker.addNewCreature(2);
-tracker.updateBoard();
 //# sourceMappingURL=monster.js.map
