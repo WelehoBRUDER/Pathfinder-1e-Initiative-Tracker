@@ -363,4 +363,5 @@ class Tracker {
     }
 }
 const tracker = new Tracker();
+tracker.loadPreviousBoard();
 //# sourceMappingURL=tracker.js.map

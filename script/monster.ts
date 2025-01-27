@@ -8,15 +8,13 @@ class MonsterList {
 		this.loadData();
 	}
 
-	async loadData() /**:void*/ {
-		const data = await fetch("https://github.com/WelehoBRUDER/Pathfinder-1e-Initiative-Tracker/blob/main/data/monsters.json");
-		const monsters = await data.json();
-		monsters.forEach((mon: any) => {
+	loadData() /**:void*/ {
+		// @ts-ignore
+		monsters_raw_data.forEach((mon: any) => {
 			if (mon.model === "srd20.monster") {
 				this.monsters.push({ ...mon.fields, ac: mon.fields.armor_class });
 			}
 		});
-		tracker.loadPreviousBoard();
 	}
 
 	getMonster(id: string) {

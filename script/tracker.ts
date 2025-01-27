@@ -397,3 +397,4 @@ class Tracker {
 }
 
 const tracker = new Tracker();
+tracker.loadPreviousBoard();
