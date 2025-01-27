@@ -18,7 +18,11 @@
   <main class="tracker-base">
     <div class="buttons-top">
       <button class="outside-btn" onclick="tracker.sortCreatures()">Sort</button>
-      <button class="outside-btn" onclick="tracker.rollInitiativeForAll()">Roll all</button>
+      <button class="outside-btn" onclick="tracker.rollInitiativeForAll()">Roll All</button>
+      <button class="outside-btn" onclick="tracker.rollInitiativeForAll({onlyHostile: true})">Roll All
+        Non-Player</button>
+      <button class="outside-btn" onclick="tracker.rollHpForAll()">Roll All HP</button>
+      <button class="outside-btn" onclick="tracker.clear()">CLEAR</button>
     </div>
     <div class="creature-board"></div>
     <div class="buttons-bottom">

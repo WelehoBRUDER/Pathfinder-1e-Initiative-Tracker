@@ -38,6 +38,14 @@ class Tracker {
 		this.creatures = [];
 	}
 
+	clear(): void {
+		const confirmation = confirm("Are you sure you want to clear the board?");
+		if (confirmation) {
+			this.creatures = [];
+			this.updateBoard();
+		}
+	}
+
 	addNewCreature(faction: number = 1): void {
 		this.creatures.push(
 			new Creature({
@@ -53,8 +61,9 @@ class Tracker {
 		this.updateBoard();
 	}
 
-	rollInitiativeForAll() {
+	rollInitiativeForAll(options?: { onlyHostile: boolean }) {
 		this.creatures.forEach((creature: Monster | Creature) => {
+			if (options?.onlyHostile && creature.faction === 2) return;
 			creature.rollInitiative();
 		});
 		this.updateBoard();
@@ -65,8 +74,21 @@ class Tracker {
 			// Prevent attempting to roll hp for players
 			if ("hpRoll" in creature) {
 				creature.hpRoll();
+				this.updateCreatureHP(creature);
 			}
 		});
+	}
+
+	updateCreatureHP(creature: Monster | Creature) {
+		const bar = document.querySelector(`.hpBar_${creature.index}`);
+		const fill: HTMLDivElement = bar.querySelector(".barFill");
+		// These two are identical, but always in this order so we can differentiate them
+		const hp: HTMLInputElement = bar.querySelectorAll(".hp-num")[0] as HTMLInputElement;
+		const maxHp: HTMLInputElement = bar.querySelectorAll(".hp-num")[1] as HTMLInputElement;
+		console.log(hp, maxHp);
+		hp.value = creature.hp.toString();
+		maxHp.value = creature.maxHp.toString();
+		fill.style.width = `${creature.hpRatio()}%`;
 	}
 
 	// Sorts all creatures in the current table in order of initiative
