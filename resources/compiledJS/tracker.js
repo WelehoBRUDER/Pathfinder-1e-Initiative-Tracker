@@ -43,6 +43,9 @@ class Tracker {
             index: this.creatures.length - 1,
         }));
     }
+    sortCreatures() {
+        console.log("yep");
+    }
     updateCreatureToMonster(index, monsterId) {
         const mon = monsterList.getMonster(monsterId);
         if (mon) {
@@ -60,6 +63,24 @@ class Tracker {
         const input = document.createElement("input");
         input.type = "text";
         return input;
+    }
+    createEmbeddedButton(img) {
+        const btn = document.createElement("button");
+        const bg = document.createElement("img");
+        btn.classList.add("embedded-button");
+        bg.src = `../../resources/img/${img}.png`;
+        btn.append(bg);
+        return btn;
+    }
+    createEmbeddedLink(link) {
+        const anchor = document.createElement("a");
+        const img = document.createElement("img");
+        img.src = "../../resources/img/link.png";
+        anchor.classList.add("embedded-button");
+        anchor.target = "_blank";
+        anchor.href = link;
+        anchor.append(img);
+        return anchor;
     }
     updateBoard() {
         creatureBoard.innerHTML = "";
@@ -86,13 +107,11 @@ class Tracker {
             const creatureItem = document.createElement("div");
             creatureItem.classList.add("creature");
             creatureItem.classList.add(factions[creature.faction]);
+            // Create each cell within the creature element
             creatureItem.appendChild(this.createInitiative(creature));
             creatureItem.appendChild(this.createName(creature));
             creatureItem.appendChild(this.createHitPoints(creature));
             creatureItem.appendChild(this.createAC(creature));
-            /* Initiative */
-            const init = document.createElement("div");
-            init.classList.add("init");
             creatureBoard.append(creatureItem);
         });
     }
@@ -101,8 +120,23 @@ class Tracker {
         initiative.classList.add("item");
         initiative.classList.add("init");
         const input = this.createInput();
-        input.value = "0";
-        initiative.append(input);
+        input.value = creature.getInit();
+        // Create roll button for initiative
+        const rollBtn = this.createEmbeddedButton("dice-twenty-faces-twenty");
+        rollBtn.title = "Roll initiative";
+        initiative.append(input, rollBtn);
+        rollBtn.addEventListener("click", () => {
+            creature.rollInitiative();
+            input.value = creature.getInit();
+        });
+        input.addEventListener("keyup", (e) => {
+            if (e.key === "Enter") {
+                const num = parseInt(input.value);
+                if (!isNaN(num)) {
+                    creature.init = num;
+                }
+            }
+        });
         return initiative;
     }
     createName(creature) {
@@ -123,17 +157,15 @@ class Tracker {
         // Unfortunately, the links are inconsistent, so sometimes this will lead to a 404
         // But usually the correct stat block can be found as the first recommendation on that page
         if ("altname" in creature) {
-            const link = document.createElement("a");
-            const altlink = document.createElement("a");
-            link.href = creature.getLink();
-            link.target = "_blank";
-            link.textContent = "l";
-            altlink.href = creature.getLinkAlt();
-            altlink.target = "_blank";
-            altlink.textContent = "a";
-            creatureName.append(link, altlink);
+            const link = this.createEmbeddedLink(creature.getLink());
+            const altlink = this.createEmbeddedLink(creature.getLinkAlt());
+            link.title = "Primary link, goes straight to its source";
+            altlink.title = "Alternative link that navigates through category. In case primary link doesn't work.";
+            creatureName.append(link, input, altlink);
         }
-        creatureName.append(input);
+        else {
+            creatureName.append(input);
+        }
         return creatureName;
     }
     createHitPoints(creature) {

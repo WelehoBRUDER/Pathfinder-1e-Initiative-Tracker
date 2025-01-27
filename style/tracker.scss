@@ -1,9 +1,39 @@
 $grey: rgb(22, 22, 22);
-$dark-red: rgb(34, 12, 12);
-$blue: rgb(19, 47, 99);
+$dark-red: rgb(87, 0, 0);
+$blue: rgb(0, 37, 105);
+$yellowish: rgba(204, 189, 57, 0.5);
 body {
   background: black;
   overflow: hidden;
+}
+
+.embedded-button {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  font-size: 3rem;
+  border: none;
+  outline: none;
+  background: none;
+  width: 3.5rem;
+  height: 3.5rem;
+  transition: 0.3s;
+  opacity: 0;
+  z-index: 2;
+  cursor: pointer;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.item:has(.embedded-button) {
+  &:hover {
+    .embedded-button {
+      opacity: 1;
+    }
+  }
 }
 
 .search-list {
@@ -66,14 +96,6 @@ body {
   color: white;
 }
 
-.hostile {
-  background: $dark-red;
-}
-
-.friendly {
-  background: $blue;
-}
-
 .tracker-base {
   background: $grey;
   display: flex;
@@ -99,15 +121,23 @@ body {
     justify-content: flex-start;
 
     .init {
-      width: 10vw;
+      width: 20vw;
+
+      input {
+        width: 15rem;
+      }
     }
 
     .name {
       width: 25vw;
+
+      input[type="text"] {
+        font-size: 2.5rem;
+      }
     }
 
     .hp {
-      width: 45vw;
+      width: 35vw;
     }
 
     .ac {
@@ -121,11 +151,24 @@ body {
       position: relative;
     }
 
+    &.friendly {
+      > .item {
+        box-shadow: inset 0 0 2.5rem 2rem $blue;
+      }
+    }
+
+    &.hostile {
+      > .item {
+        box-shadow: inset 0 0 2.5rem 2rem $dark-red;
+      }
+    }
+
     .item {
       height: 100%;
       border: 0.5rem solid white;
       box-sizing: border-box;
       padding: 0.5rem;
+      box-shadow: inset 0 0 1.2rem 1rem rgb(43, 43, 43);
 
       .numbers {
         position: relative;
@@ -139,13 +182,27 @@ body {
         display: flex;
         justify-content: center;
         align-items: center;
-        background: black;
+        background: rgb(15, 15, 15);
+        box-shadow: inset 0 0 0.8rem 0.5rem black;
       }
 
       .barFill {
         width: 100%;
         height: 100%;
-        background: rgb(71, 1, 7);
+        background: rgb(83, 20, 23);
+        background: linear-gradient(
+          90deg,
+          rgb(83, 20, 23) 0%,
+          rgb(88, 56, 59) 10%,
+          rgb(73, 28, 30) 25%,
+          rgb(83, 20, 23) 100%
+        );
+        animation-name: HealthBar;
+        animation-duration: 4s;
+        background-size: 200% 200%;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+        box-shadow: inset 0 0 0.8rem 0.5rem $dark-red;
         position: absolute;
         left: 0;
       }
@@ -214,5 +271,14 @@ body {
         }
       }
     }
+  }
+}
+
+@keyframes HealthBar {
+  0% {
+    background-position: 200% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }

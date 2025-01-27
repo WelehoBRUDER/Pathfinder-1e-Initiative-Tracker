@@ -71,4 +71,8 @@ class Creature {
 	rollInitiative() {
 		this.init = diceController.roll(20, 1);
 	}
+
+	getInit(): string {
+		return this.init.toString();
+	}
 }

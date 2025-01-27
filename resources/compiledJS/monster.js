@@ -74,8 +74,12 @@ class Monster extends Creature {
         return `https://www.d20pfsrd.com/bestiary/monster-listings/${this.type}s/${this.subtypes}s/${this.altname}/`;
     }
     rollInitiative() {
-        const roll = diceController.roll(20, 1);
-        this.init = roll + this.initiative;
+        super.rollInitiative();
+        this.init += this.initiative;
+    }
+    getInit() {
+        const num = super.getInit();
+        return `${num} (${this.initiative >= 0 ? "+" : ""}${this.initiative})`;
     }
 }
 tracker.addNewCreature();

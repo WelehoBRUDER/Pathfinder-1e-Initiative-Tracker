@@ -94,8 +94,13 @@ class Monster extends Creature {
 	}
 
 	rollInitiative() {
-		const roll = diceController.roll(20, 1);
-		this.init = roll + this.initiative;
+		super.rollInitiative();
+		this.init += this.initiative;
+	}
+
+	getInit(): string {
+		const num = super.getInit();
+		return `${num} (${this.initiative >= 0 ? "+" : ""}${this.initiative})`;
 	}
 }
 
