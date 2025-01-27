@@ -269,15 +269,19 @@ class Tracker {
             input.value = creature.getInit();
             this.saveCurrentBoard();
         });
+        const initEvent = () => {
+            const num = parseInt(input.value);
+            if (!isNaN(num)) {
+                creature.init = num;
+                this.saveCurrentBoard();
+            }
+        };
         input.addEventListener("keyup", (e) => {
             if (e.key === "Enter") {
-                const num = parseInt(input.value);
-                if (!isNaN(num)) {
-                    creature.init = num;
-                    this.saveCurrentBoard();
-                }
+                initEvent();
             }
         });
+        input.addEventListener("focusout", initEvent);
         return initiative;
     }
     createName(creature) {
@@ -293,6 +297,7 @@ class Tracker {
         });
         input.addEventListener("focusout", () => {
             searchMonster.remove();
+            creature.name = input.value;
             this.saveCurrentBoard();
         });
         input.addEventListener("keypress", (e) => {
@@ -349,38 +354,46 @@ class Tracker {
         hpBar.append(numbers);
         numbers.append(hp, slash, maxHp);
         hitPoints.append(hpBar);
+        const hpEvent = () => {
+            const value = handleEvent(hp.value);
+            if (isNaN(value)) {
+                hp.value = creature.hp.toString();
+            }
+            else {
+                creature.setHp(value);
+                hp.value = value.toString();
+            }
+            this.saveCurrentBoard();
+            hpBarFill.style.width = `${creature.hpRatio()}%`;
+        };
+        const maxHpEvent = () => {
+            const value = handleEvent(maxHp.value);
+            if (isNaN(value)) {
+                maxHp.value = creature.maxHp.toString();
+            }
+            else {
+                creature.setMaxHp(value);
+                hp.value = creature.hp.toString();
+                maxHp.value = value.toString();
+            }
+            this.saveCurrentBoard();
+            hpBarFill.style.width = `${creature.hpRatio()}%`;
+        };
         /* Add event listeners and handle logic */
         hp.addEventListener("keypress", (e) => {
             if (e.key === "Enter") {
-                const value = handleEvent(hp.value);
-                if (isNaN(value)) {
-                    hp.value = creature.hp.toString();
-                }
-                else {
-                    creature.setHp(value);
-                    hp.value = value.toString();
-                }
-                this.saveCurrentBoard();
-                hpBarFill.style.width = `${creature.hpRatio()}%`;
+                hpEvent();
             }
         });
+        hp.addEventListener("focusout", hpEvent);
+        maxHp.addEventListener("focusout", maxHpEvent);
         maxHp.addEventListener("keypress", (e) => {
             if (e.key === "Enter") {
-                const value = handleEvent(maxHp.value);
-                if (isNaN(value)) {
-                    maxHp.value = creature.maxHp.toString();
-                }
-                else {
-                    creature.setMaxHp(value);
-                    hp.value = creature.hp.toString();
-                    maxHp.value = value.toString();
-                }
-                this.saveCurrentBoard();
-                hpBarFill.style.width = `${creature.hpRatio()}%`;
+                maxHpEvent();
             }
         });
         const handleEvent = (val) => {
-            if (val.match("^[^a-zA-Z]*[+-/*][^a-zA-Z]*$")) {
+            if (val.match("^([0-9][+-/*]?)+[0-9]$")) {
                 return Math.floor(eval(val));
             }
             return parseInt(val);
@@ -406,22 +419,29 @@ class Tracker {
         armorClass.classList.add("ac");
         const { baseArmor, flatFooted, touch } = creature.ac;
         const acEditable = this.createInput();
-        acEditable.value = `${baseArmor} / ${flatFooted} / ${touch}`;
+        acEditable.value = `${baseArmor} / ${touch} / ${flatFooted}`;
+        const acEvent = () => {
+            const values = acEditable.value.split("/");
+            try {
+                const [base, touch, flat] = values.map((a) => parseInt(a));
+                console.log("base", base, "touch", touch, "flat", flat);
+                if (!base || !touch || !flat)
+                    return;
+                creature.ac.baseArmor = base;
+                creature.ac.touch = touch;
+                creature.ac.flatFooted = flat;
+                this.saveCurrentBoard();
+            }
+            catch {
+                console.log("Invalid values in AC of ", creature.name);
+            }
+        };
         acEditable.addEventListener("keypress", (e) => {
             if (e.key === "Enter") {
-                const values = acEditable.value.split("/");
-                try {
-                    const [base, touch, flat] = values.map((a) => parseInt(a));
-                    creature.ac.baseArmor = base;
-                    creature.ac.touch = touch;
-                    creature.ac.flatFooted = flat;
-                    this.saveCurrentBoard();
-                }
-                catch {
-                    console.log("Invalid values in AC of ", creature.name);
-                }
+                acEvent();
             }
         });
+        acEditable.addEventListener("focusout", acEvent);
         armorClass.append(acEditable);
         return armorClass;
     }
