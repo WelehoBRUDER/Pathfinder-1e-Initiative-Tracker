@@ -34,17 +34,34 @@ class Tracker {
     }
     addNewCreature(faction = 1) {
         this.creatures.push(new Creature({
-            name: "TestCreature",
+            name: "",
             faction: faction,
             hp: null,
             maxHp: null,
             init: 0,
             ac: "10, touch 10, flat-footed 10",
-            index: this.creatures.length - 1,
+            index: this.creatures.length,
         }));
+        this.updateBoard();
     }
+    // Sorts all creatures in the current table in order of initiative
     sortCreatures() {
-        console.log("yep");
+        this.creatures = this.creatures.sort((a, b) => {
+            if (a.init > b.init)
+                return -1;
+            else if (b.init > a.init)
+                return 1;
+            // When initiatives are equal, compare factions
+            if (a.init === b.init) {
+                // Player faction (2) should always be ranked above neutral (1) and hostile (0)
+                if (a.faction > b.faction)
+                    return -1;
+                else if (b.faction > a.faction)
+                    return 1;
+            }
+            return 0;
+        });
+        this.updateBoard();
     }
     updateCreatureToMonster(index, monsterId) {
         const mon = monsterList.getMonster(monsterId);
@@ -86,19 +103,21 @@ class Tracker {
         creatureBoard.innerHTML = "";
         // Create top layer
         const headerItems = [
-            ["init", "Init"],
-            ["name", "Creature"],
-            ["hp", "Hit Points"],
-            ["ac", "AC/Touch/Flat"],
+            ["init", "Initiative", "Initiative, both current and bonus"],
+            ["name", "Name", "Creature's name / type"],
+            ["hp", "Hit Points", "HP bar that shows both current and max health"],
+            ["ac", "AC/Touch/Flat", "Armor Class, Touch AC and Flat-footed AC"],
         ];
         const headerBar = document.createElement("div");
         headerBar.classList.add("creature");
         headerBar.classList.add("header-bar");
-        headerItems.forEach(([key, val]) => {
+        headerItems.forEach(([key, val, title]) => {
             const item = document.createElement("div");
             item.classList.add("item");
             item.classList.add(key);
             item.textContent = val;
+            item.title = title;
+            item.style.userSelect = "none";
             headerBar.append(item);
         });
         creatureBoard.append(headerBar);
@@ -191,6 +210,8 @@ class Tracker {
         hpBar.classList.add(`bar`);
         hpBarFill.classList.add(`hpBarFill_${creature.index}`);
         hpBarFill.classList.add(`barFill`);
+        hpBarFill.style.animationDuration = `${Math.random() * 2 + 2}s`;
+        hpBarFill.style.animationDelay = `${Math.random()}s`;
         numbers.classList.add("numbers");
         /* Set bar ratio and append everything together */
         hpBarFill.style.width = `${creature.hpRatio()}%`;
@@ -232,6 +253,18 @@ class Tracker {
             }
             return parseInt(val);
         };
+        /* Add a roll button for HP if possible */
+        if ("hpRoll" in creature) {
+            const hpRoll = this.createEmbeddedButton("dice-twenty-faces-twenty");
+            hpRoll.title = `Roll HP (${creature.hitDice})`;
+            hpRoll.addEventListener("click", () => {
+                creature.hpRoll();
+                hp.value = creature.hp.toString();
+                maxHp.value = creature.maxHp.toString();
+                hpBarFill.style.width = `${creature.hpRatio()}%`;
+            });
+            numbers.append(hpRoll);
+        }
         return hitPoints;
     }
     createAC(creature) {

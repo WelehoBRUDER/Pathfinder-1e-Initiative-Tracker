@@ -1,10 +1,19 @@
-$grey: rgb(22, 22, 22);
+$near-black: rgb(12, 12, 12);
 $dark-red: rgb(87, 0, 0);
 $blue: rgb(0, 37, 105);
 $yellowish: rgba(204, 189, 57, 0.5);
 body {
-  background: black;
+  background: $near-black;
   overflow: hidden;
+}
+
+.buttons-top,
+.buttons-bottom {
+  button {
+    background: black;
+    font-size: 3rem;
+    padding: 1rem;
+  }
 }
 
 .embedded-button {
@@ -97,7 +106,6 @@ body {
 }
 
 .tracker-base {
-  background: $grey;
   display: flex;
   flex-direction: column;
   align-items: center;

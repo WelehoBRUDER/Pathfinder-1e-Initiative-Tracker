@@ -16,9 +16,14 @@
 
 <body>
   <main class="tracker-base">
+    <div class="buttons-top">
+      <button class="outside-btn" onclick="tracker.sortCreatures()">Sort</button>
+    </div>
     <div class="creature-board"></div>
-    <div class="buttons">
-      <button class="sort" onclick="tracker.sortCreatures()">Sort</button>
+    <div class="buttons-bottom">
+      <button class="add-btn" onclick="tracker.addNewCreature(0)">ADD HOSTILE</button>
+      <button class="add-btn" onclick="tracker.addNewCreature(1)">ADD NEUTRAL</button>
+      <button class="add-btn" onclick="tracker.addNewCreature(2)">ADD FRIENDLY</button>
     </div>
     <div class="search-list">
       <ul class="monsters"></ul>

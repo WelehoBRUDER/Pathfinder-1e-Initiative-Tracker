@@ -63,6 +63,7 @@ class Monster extends Creature {
             hp += diceController.roll(+die);
         }
         this.hp = hp + flat;
+        this.maxHp = this.hp;
     }
     damage(amount) {
         this.hp -= amount;
