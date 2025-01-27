@@ -7,12 +7,31 @@ body {
   overflow: hidden;
 }
 
+button.friendly {
+  box-shadow: inset 0 0 1rem 1rem $blue;
+}
+
+button.hostile {
+  box-shadow: inset 0 0 1rem 1rem $dark-red;
+}
+
 .buttons-top,
 .buttons-bottom {
+  button.add-btn {
+    width: 7rem;
+    font-size: 6rem;
+    border-radius: 12rem;
+  }
   button {
-    background: black;
+    background: rgb(20, 20, 20);
     font-size: 3rem;
-    padding: 1rem;
+    margin: 2rem;
+    transition: 0.1s;
+
+    &:hover {
+      cursor: pointer;
+      filter: brightness(0.8);
+    }
   }
 }
 

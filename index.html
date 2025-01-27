@@ -18,12 +18,13 @@
   <main class="tracker-base">
     <div class="buttons-top">
       <button class="outside-btn" onclick="tracker.sortCreatures()">Sort</button>
+      <button class="outside-btn" onclick="tracker.rollInitiativeForAll()">Roll all</button>
     </div>
     <div class="creature-board"></div>
     <div class="buttons-bottom">
-      <button class="add-btn" onclick="tracker.addNewCreature(0)">ADD HOSTILE</button>
-      <button class="add-btn" onclick="tracker.addNewCreature(1)">ADD NEUTRAL</button>
-      <button class="add-btn" onclick="tracker.addNewCreature(2)">ADD FRIENDLY</button>
+      <button class="add-btn hostile" onclick="tracker.addNewCreature(0)">+</button>
+      <button class="add-btn neutral" onclick="tracker.addNewCreature(1)">+</button>
+      <button class="add-btn friendly" onclick="tracker.addNewCreature(2)">+</button>
     </div>
     <div class="search-list">
       <ul class="monsters"></ul>

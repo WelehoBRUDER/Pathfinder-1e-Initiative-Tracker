@@ -53,6 +53,22 @@ class Tracker {
 		this.updateBoard();
 	}
 
+	rollInitiativeForAll() {
+		this.creatures.forEach((creature: Monster | Creature) => {
+			creature.rollInitiative();
+		});
+		this.updateBoard();
+	}
+
+	rollHpForAll() {
+		this.creatures.forEach((creature: Monster | Creature) => {
+			// Prevent attempting to roll hp for players
+			if ("hpRoll" in creature) {
+				creature.hpRoll();
+			}
+		});
+	}
+
 	// Sorts all creatures in the current table in order of initiative
 	sortCreatures() {
 		this.creatures = this.creatures.sort((a: Creature | Monster, b: Creature | Monster) => {
