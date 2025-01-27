@@ -4,8 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pathfinder 1e Initiative Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style/compiled/tracker.css">
+  <title>Pathfinder 1E Initiative Tracker</title>
 
   <script src="data/monsters.js" defer></script>
   <script src="resources/compiledJS/elems.js" defer></script>
@@ -17,29 +20,44 @@
 
 <body>
   <main class="tracker-base">
+    <header class="header">
+      <h1 class="main-title">Pathfinder Initiative Tracker</h1>
+    </header>
     <div class="buttons-top">
-      <button class="outside-btn" title="Sort creatures by initiative" onclick="tracker.sortCreatures()">Sort</button>
-      <button class="outside-btn" title="Roll initiative for all creatures"
-        onclick="tracker.rollInitiativeForAll()">Roll
-        All</button>
-      <button class="outside-btn" title="Roll initiative for neutral and hostile creatures"
-        onclick="tracker.rollInitiativeForAll({onlyHostile: true})">Roll All
-        Non-Player</button>
-      <button class="outside-btn" title="Roll HP for all creatures (that have hit dice)"
-        onclick="tracker.rollHpForAll()">Roll All HP</button>
-      <button class="outside-btn red" title="Clear the current board, deleting all creatures"
-        onclick="tracker.clear()">CLEAR</button>
+      <div class="left">
+        <button class="outside-btn" title="Sort creatures by initiative" onclick="tracker.sortCreatures()">Sort</button>
+      </div>
+      <div class="center">
+        <button class="outside-btn" title="Roll initiative for all creatures"
+          onclick="tracker.rollInitiativeForAll()">Roll
+          All</button>
+        <button class="outside-btn" title="Roll initiative for neutral and hostile creatures"
+          onclick="tracker.rollInitiativeForAll({onlyHostile: true})">Roll All
+          Non-Player</button>
+        <button class="outside-btn" title="Roll HP for all creatures (that have hit dice)"
+          onclick="tracker.rollHpForAll()">Roll All HP</button>
+      </div>
+      <div class="right">
+        <button class="outside-btn red" title="Clear the current board, deleting all creatures"
+          onclick="tracker.clear()">CLEAR</button>
+      </div>
     </div>
     <div class="creature-board"></div>
     <div class="buttons-bottom">
-      <button class="outside-btn" title="Return to previous turn" onclick="tracker.moveTurn(-1)">Prev</button>
-      <button class="add-btn hostile" title="Add hostile creature to initiative"
-        onclick="tracker.addNewCreature(0)">+</button>
-      <button class="add-btn neutral" title="Add neutral creature to initiative"
-        onclick="tracker.addNewCreature(1)">+</button>
-      <button class="add-btn friendly" title="Add friendly creature to initiative"
-        onclick="tracker.addNewCreature(2)">+</button>
-      <button class="outside-btn" title="Advance to next turn" onclick="tracker.moveTurn(1)">Next</button>
+      <div class="left">
+        <button class="outside-btn" title="Return to previous turn" onclick="tracker.moveTurn(-1)">Prev</button>
+      </div>
+      <div class="center">
+        <button class="add-btn hostile" title="Add hostile creature to initiative"
+          onclick="tracker.addNewCreature(0)">+</button>
+        <button class="add-btn neutral" title="Add neutral creature to initiative"
+          onclick="tracker.addNewCreature(1)">+</button>
+        <button class="add-btn friendly" title="Add friendly creature to initiative"
+          onclick="tracker.addNewCreature(2)">+</button>
+      </div>
+      <div class="right">
+        <button class="outside-btn" title="Advance to next turn" onclick="tracker.moveTurn(1)">Next</button>
+      </div>
     </div>
     <div class="round-counter">
       <p class="counter">Round: 0</p>

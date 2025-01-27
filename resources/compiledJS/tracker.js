@@ -433,6 +433,8 @@ class Tracker {
         const deleteBtn = this.createVisibleButton("trash-can");
         copyBtn.classList.add("blue");
         deleteBtn.classList.add("red");
+        copyBtn.title = "Copy this creature";
+        deleteBtn.title = "Remove this creature";
         copyBtn.addEventListener("click", () => {
             if ("hitDice" in creature) {
                 const monster = new Monster(monsterList.getMonster(creature.altname));
