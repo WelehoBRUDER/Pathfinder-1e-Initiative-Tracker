@@ -472,7 +472,7 @@ class Tracker {
 			}
 		});
 		const handleEvent = (val: string) => {
-			if (val.match("^([0-9][+-/*]?)+[0-9]$")) {
+			if (val.match("^-?([0-9][+-/*]?)+[0-9]$")) {
 				return Math.floor(eval(val));
 			}
 			return parseInt(val);
