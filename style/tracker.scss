@@ -300,7 +300,7 @@ button {
       }
 
       .barFill {
-        transition: 0.8s ease-out;
+        transition: 0.4s ease-out;
         width: 100%;
         height: 100%;
         background: rgb(83, 20, 23);
@@ -312,7 +312,7 @@ button {
           rgb(83, 20, 23) 100%
         );
         animation-name: HealthBar;
-        animation-duration: 4s;
+        animation-duration: 8s;
         background-size: 200% 200%;
         animation-iteration-count: infinite;
         animation-timing-function: linear;
@@ -405,9 +405,14 @@ button {
 
 @keyframes HealthBar {
   0% {
-    background-position: 200% 50%;
+    background-position: 250% 50%;
   }
-  100% {
+  30% {
     background-position: 0% 50%;
+  }
+
+  30%,
+  100% {
+    background-position: 50% 50%;
   }
 }

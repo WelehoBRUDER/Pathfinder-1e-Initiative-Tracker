@@ -345,7 +345,7 @@ class Tracker {
         hpBar.classList.add(`bar`);
         hpBarFill.classList.add(`hpBarFill_${creature.index}`);
         hpBarFill.classList.add(`barFill`);
-        hpBarFill.style.animationDuration = `${Math.random() * 2 + 2}s`;
+        hpBarFill.style.animationDuration = `${Math.random() * 4 + 6}s`;
         hpBarFill.style.animationDelay = `${Math.random()}s`;
         numbers.classList.add("numbers");
         /* Set bar ratio and append everything together */
@@ -355,6 +355,7 @@ class Tracker {
         numbers.append(hp, slash, maxHp);
         hitPoints.append(hpBar);
         const hpEvent = () => {
+            const prevRatio = creature.hpRatio();
             const value = handleEvent(hp.value);
             if (isNaN(value)) {
                 hp.value = creature.hp.toString();
@@ -364,9 +365,18 @@ class Tracker {
                 hp.value = value.toString();
             }
             this.saveCurrentBoard();
+            const currentRatio = creature.hpRatio();
+            /* Changes how the bar is drained during a heavy hit (>50% hp gone at once) */
+            if (prevRatio - currentRatio > 50) {
+                hpBarFill.style.transition = "0.4s cubic-bezier(1, 0, 0, 1.5)";
+            }
+            else {
+                hpBarFill.style.transition = "0.4s ease-out";
+            }
             hpBarFill.style.width = `${creature.hpRatio()}%`;
         };
         const maxHpEvent = () => {
+            const prevRatio = creature.hpRatio();
             const value = handleEvent(maxHp.value);
             if (isNaN(value)) {
                 maxHp.value = creature.maxHp.toString();
@@ -377,6 +387,14 @@ class Tracker {
                 maxHp.value = value.toString();
             }
             this.saveCurrentBoard();
+            const currentRatio = creature.hpRatio();
+            /* Changes how the bar is drained during a heavy hit (>50% hp gone at once) */
+            if (prevRatio - currentRatio > 50) {
+                hpBarFill.style.transition = "0.4s cubic-bezier(1, 0, 0, 1.5)";
+            }
+            else {
+                hpBarFill.style.transition = "0.4s ease-out";
+            }
             hpBarFill.style.width = `${creature.hpRatio()}%`;
         };
         /* Add event listeners and handle logic */
