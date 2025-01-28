@@ -222,6 +222,17 @@ button {
     align-items: center;
     justify-content: flex-start;
 
+    &.defeated {
+      filter: grayscale(1);
+
+      .hp {
+        div.bar {
+          background: none;
+          box-shadow: none;
+        }
+      }
+    }
+
     &.current {
       position: relative;
       transform: scale(1.1);
@@ -362,6 +373,7 @@ button {
     .creature {
       height: 18rem;
       word-wrap: break-word;
+
       .item {
         flex-wrap: wrap;
 

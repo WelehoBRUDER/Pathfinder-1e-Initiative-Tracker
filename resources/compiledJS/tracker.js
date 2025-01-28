@@ -252,7 +252,25 @@ class Tracker {
             creatureItem.appendChild(this.createAC(creature));
             creatureItem.appendChild(this.createManage(creature));
             creatureBoard.append(creatureItem);
+            this.checkIfDefeated(creature);
         });
+    }
+    checkIfDefeated(creature, delay = 0) {
+        const creatureItem = document.querySelector(`.c${creature.index}`);
+        if (creatureItem) {
+            setTimeout(() => {
+                if (creature.hp <= 0 && creature.maxHp !== 0) {
+                    if (!creatureItem.classList.contains("defeated")) {
+                        creatureItem.classList.add("defeated");
+                    }
+                }
+                else {
+                    if (creatureItem.classList.contains("defeated")) {
+                        creatureItem.classList.remove("defeated");
+                    }
+                }
+            }, delay);
+        }
     }
     createInitiative(creature) {
         const initiative = document.createElement("div");
@@ -373,7 +391,11 @@ class Tracker {
             else {
                 hpBarFill.style.transition = "0.4s ease-out";
             }
+            let delay = 0;
+            if (prevRatio > currentRatio)
+                delay = 350;
             hpBarFill.style.width = `${creature.hpRatio()}%`;
+            this.checkIfDefeated(creature, delay);
         };
         const maxHpEvent = () => {
             const prevRatio = creature.hpRatio();
